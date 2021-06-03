@@ -90,8 +90,8 @@ public class MainWindow extends JFrame implements ActionListener {
 					new SendMessageDialog(this, file.getAbsolutePath());
 				}
 				else if(command.equals(DECRYPT_FILE)) {
-					String pass = "pera123";
 					pgpProtocol.receiveMessage(file.getAbsolutePath());
+					
 					setEnabled(true);
 				}
 				else if(command.equals(EXPORT_PUBLIC)) {

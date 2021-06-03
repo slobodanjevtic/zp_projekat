@@ -99,7 +99,6 @@ public class PgpProtocol extends PgpAbstract {
 	public PgpProtocol() {
 		super();
 		readFiles();
-
 	}
 
 	public PGPPrivateKey getPrivateKey(long keyID, char[] pass) {
@@ -273,7 +272,6 @@ public class PgpProtocol extends PgpAbstract {
 			publicOut = new FileOutputStream(fileName + PUBLIC_KEY_APPEND);
 			publicOut = new ArmoredOutputStream(publicOut);
 			publicKeyRingCollection.getPublicKeyRing(keyID).encode(publicOut);
-			;
 			publicOut.close();
 		} catch (PGPException | IOException e) {
 			// TODO Auto-generated catch block
@@ -592,6 +590,7 @@ public class PgpProtocol extends PgpAbstract {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public void signAndEncrypt(String outputFileName, String inputFileName, String algorithm, Long signature,
 			char[] password, List<Long> encryptFor, boolean compress, boolean convertToRadix64, boolean encrypt)
 			throws Exception {
@@ -696,32 +695,6 @@ public class PgpProtocol extends PgpAbstract {
 
 	}
 	
-/*
-	private boolean verify(String inputFile) {
-		InputStream inSig = PGPUtil.getDecoderStream(new FileInputStream(inputFile));
-		// ArmoredInputStream inSig = new ArmoredInputStream(new
-		// FileInputStream(signaturFile));
-		JcaPGPObjectFactory objFactory = new JcaPGPObjectFactory(inSig);
-		PGPSignatureList signatureList = (PGPSignatureList) objFactory.nextObject();
-		PGPSignature signature = signatureList.get(0);
-		// ArmoredInputStream keyIn = new ArmoredInputStream(new
-		// FileInputStream(publicKeyFile));
-		PGPPublicKey publicKey = publicKeyRingCollection.getPublicKey(signature.getKeyID());
-		byte[] bytePublicKeyFingerprint = publicKey.getFingerprint();
-		char[] publicKeyFingerprintHexArray = binary.Hex.encodeHex(bytePublicKeyFingerprint);
-		String publicKeyFingerprintHex = new String(publicKeyFingerprintHexArray);
-		signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), publicKey);
-		FileInputStream in = new FileInputStream(file);
-		byte[] byteData = new byte[(int) file.length()];
-		in.read(byteData);
-		in.close();
-		signature.update(byteData);
-		if (signature.verify() && publicKeyFingerprintHex.equals(fingerprint)) {
-			return true;
-		} else {
-			return false;
-		}
-	}*/
 	
     private boolean verifySignature(InputStream in, PGPSignatureList o) throws IOException, NoSuchProviderException, PGPException, SignatureException {
         boolean verify = false;
@@ -779,11 +752,12 @@ public class PgpProtocol extends PgpAbstract {
 			// show password box
 			//verifyMessage2((PGPSignatureList) firstObject, inputStream, outputStream, outputFile);
 			verifySignature(inputStream, (PGPSignatureList)firstObject);
-		} else if (firstObject instanceof PGPCompressedData) {
+		} /*else if (firstObject instanceof PGPCompressedData) {
 
 			verifyMessage((PGPCompressedData) firstObject, outputFile);
-		} else {
+		} */else {
 			// show password box
+			
 			boolean signed = false;
 			PGPPrivateKey privateKey = null;
 			PGPPublicKeyEncryptedData encryptedData = null;
