@@ -15,6 +15,19 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.util.Strings;
 
 public class FileUtil {
+
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
 	public static void processLine(PGPSignature sig, byte[] line) throws SignatureException, IOException {
 		int length = getLengthWithoutWhiteSpace(line);
 		if (length > 0) {
@@ -118,15 +131,13 @@ public class FileUtil {
 
 		return nlBytes;
 	}
-	
-    public static byte[] compressFile(String fileName, int algorithm) throws IOException
-    {
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(algorithm);
-        PGPUtil.writeFileToLiteralData(comData.open(bOut), PGPLiteralData.BINARY,
-            new File(fileName));
-        comData.close();
-        return bOut.toByteArray();
-    }
+
+	public static byte[] compressFile(String fileName, int algorithm) throws IOException {
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(algorithm);
+		PGPUtil.writeFileToLiteralData(comData.open(bOut), PGPLiteralData.BINARY, new File(fileName));
+		comData.close();
+		return bOut.toByteArray();
+	}
 
 }

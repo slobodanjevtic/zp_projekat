@@ -82,9 +82,7 @@ public abstract class PgpAbstract implements Pgp {
 	public abstract boolean isSecretKey(long keyID);
 	
 	protected abstract void verifyMessage(PGPCompressedData compressedData, String outputFile);
-	
-	protected abstract void verifyMessage2(PGPSignatureList signatureList, InputStream inputStream, OutputStream outputStream, String outputFile);
-	protected abstract void verifyMessage3(String inputFile, String outputFile);		
+	protected abstract void verifySignature(String inputFile, PGPSignatureList signatureList) throws Exception;
 	
 	public abstract void signAndEncrypt(String outputFileName, String inputFileName, String algorithm,
 			Long signature, char[] password, List<Long> encryptFor, boolean compress,
