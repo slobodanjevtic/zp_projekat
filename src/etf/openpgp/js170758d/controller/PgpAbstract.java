@@ -55,13 +55,13 @@ public abstract class PgpAbstract implements Pgp {
 	}
 
 	@Override
-	public void receiveMessage(String fileName, char[] pass) {
+	public void receiveMessage(String fileName) {
 		//decryptMessage(fileName, "out.txt", pass);
 		//System.out.println(fileName);
 		//String fileName2 = "info.txt_temp.gpg";
 		//verifyMessage2(null, fileName, fileName + ".out");
 		try {
-			decryptAndVerify(fileName, fileName + ".out", pass);
+			decryptAndVerify(fileName, fileName + ".out");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,5 +90,5 @@ public abstract class PgpAbstract implements Pgp {
 			Long signature, char[] password, List<Long> encryptFor, boolean compress,
 			boolean convertToRadix64, boolean encrypt) throws Exception;
 
-	public abstract void decryptAndVerify(String inputFile, String outputFile, char[] pass) throws Exception;
+	public abstract void decryptAndVerify(String inputFile, String outputFile) throws Exception;
 }

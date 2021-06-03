@@ -36,6 +36,6 @@ public interface Pgp {
 							boolean compress, 
 							boolean convertToRadix64);
 	
-	public void receiveMessage(String fileName, char[] pass);
+	public void receiveMessage(String fileName);
 	
 }
