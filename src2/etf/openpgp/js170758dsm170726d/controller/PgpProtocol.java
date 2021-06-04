@@ -415,8 +415,11 @@ public class PgpProtocol extends PgpAbstract {
 
 	}
 	@SuppressWarnings("resource")
-	protected void verifyMessage(PGPCompressedData compressedData, String outputFile) {
+	protected void verifyMessage(PGPCompressedData compressedData, String outputFile1) {
 		try {
+			//Promena stringa bez .out dodatka
+			String outputFile = outputFile1.substring(0,outputFile1.length()-4);
+			//
 			JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(compressedData.getDataStream());
 
 			PGPOnePassSignatureList onePassSignatureList = (PGPOnePassSignatureList) objectFactory.nextObject();
@@ -588,7 +591,13 @@ public class PgpProtocol extends PgpAbstract {
 
 	}
 
-	public void decryptAndVerify(String inputFile, String outputFile) throws Exception {
+	public void decryptAndVerify(String inputFile, String outputFile1) throws Exception {
+		
+		//Promena stringa bez .out dodatka
+		String outputFile = outputFile1.substring(0,outputFile1.length()-4);
+		//
+		
+		
 		InputStream inputStream = new FileInputStream(inputFile);
 		OutputStream outputStream = new FileOutputStream(outputFile);
 
