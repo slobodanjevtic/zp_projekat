@@ -1,5 +1,6 @@
 package etf.openpgp.js170758dsm170726d.controller;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,6 +9,9 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
 import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
@@ -42,6 +46,7 @@ public abstract class PgpAbstract implements Pgp {
 								convertToRadix64, encrypt);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			Alert("Poruka nije uspesno poslata");
 			e.printStackTrace();
 		}
 	}
@@ -73,4 +78,14 @@ public abstract class PgpAbstract implements Pgp {
 			boolean convertToRadix64, boolean encrypt) throws Exception;
 
 	public abstract void decryptAndVerify(String inputFile, String outputFile) throws Exception;
+	//Alert
+	public void Alert(String n) {
+				//showMessageDialog(null, n);
+					JLabel label = new JLabel("SansSerif");
+					label.setFont(new Font("Arial", Font.CENTER_BASELINE, 18));
+					label.setText(n);
+					JOptionPane.showMessageDialog(null,label,"Izuzetak",JOptionPane.WARNING_MESSAGE);
+				  
+				
+			}
 }

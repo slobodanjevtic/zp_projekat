@@ -109,6 +109,8 @@ public class PgpProtocol extends PgpAbstract {
 			return secretKey.extractPrivateKey(
 					new JcePBESecretKeyDecryptorBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(pass));
 		} catch (PGPException e) {
+			
+			Alert("Nije uzet kljuca iz prstena");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -133,6 +135,7 @@ public class PgpProtocol extends PgpAbstract {
 			publicFileStream.close();
 			secretFileStream.close();
 		} catch (IOException | PGPException e) {
+			Alert("Nije procitan fajl koji je unet");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -197,6 +200,7 @@ public class PgpProtocol extends PgpAbstract {
 
 		} catch (PGPException e) {
 			// TODO Auto-generated catch block
+			Alert("Nije generisan par kljucev");
 			e.printStackTrace();
 			return null;
 		}
@@ -212,6 +216,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			publicOut.close();
 		} catch (IOException e) {
+			Alert("Nije sacuvan javni kljuc");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -225,6 +230,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			secretOut.close();
 		} catch (IOException e) {
+			Alert("Nije sacuvan privatni kljuc");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -246,6 +252,7 @@ public class PgpProtocol extends PgpAbstract {
 				saveSecretKeys();
 			}
 		} catch (PGPException e) {
+			Alert("Nije obrisan privatni par kljuceva");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -261,6 +268,7 @@ public class PgpProtocol extends PgpAbstract {
 			publicKeyRingCollection.getPublicKeyRing(keyID).encode(publicOut);
 			publicOut.close();
 		} catch (PGPException | IOException e) {
+			Alert("Nije exportovan  kljuc");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -277,6 +285,9 @@ public class PgpProtocol extends PgpAbstract {
 			secretKeyRingCollection.getSecretKeyRing(keyID).encode(secretOut);
 			secretOut.close();
 		} catch (PGPException | IOException e) {
+			
+			Alert("Nije sacuvan javni kljuc");
+			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -302,6 +313,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = publicKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException e) {
+			Alert("Nije uvezen javni kljuc");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -328,6 +340,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = secretKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException | PGPException e) {
+			Alert("Nije uvezen privatni kljuc");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -369,6 +382,7 @@ public class PgpProtocol extends PgpAbstract {
 			}
 			return null;
 		} catch (PGPException e) {
+			Alert("Nije uzeti potpisani kljuc");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
@@ -393,6 +407,7 @@ public class PgpProtocol extends PgpAbstract {
 			keyPairGenerator.initialize(bitLength);
 			return keyPairGenerator.generateKeyPair();
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+			Alert("Nije uzet par kljuceva");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
@@ -432,6 +447,7 @@ public class PgpProtocol extends PgpAbstract {
 				System.out.println("signature verification failed.");
 			}
 		} catch (IOException | PGPException e) {
+			Alert("Nije uspela verfikacija");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -462,6 +478,7 @@ public class PgpProtocol extends PgpAbstract {
 				System.out.println("signature verification failed.");
 			}
 		} catch (IOException | PGPException e) {
+			Alert("Nije  uspelo potpisivanje");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
