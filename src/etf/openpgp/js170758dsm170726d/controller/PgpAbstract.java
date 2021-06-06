@@ -46,8 +46,8 @@ public abstract class PgpAbstract implements Pgp {
 								convertToRadix64, encrypt);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Alert("Poruka nije uspesno poslata");
-			e.printStackTrace();
+			Alert(e.getMessage());
+			//e.printStackTrace();
 		}
 	}
 	@Override
@@ -55,7 +55,8 @@ public abstract class PgpAbstract implements Pgp {
 		try {
 			decryptAndVerify(fileName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Alert(e.getMessage());
+			//e.printStackTrace();
 		}
 	}
 	@Override
@@ -80,12 +81,16 @@ public abstract class PgpAbstract implements Pgp {
 	public abstract void decryptAndVerify(String inputFile) throws Exception;
 	//Alert
 	public void Alert(String n) {
-				//showMessageDialog(null, n);
-					JLabel label = new JLabel("SansSerif");
-					label.setFont(new Font("Arial", Font.CENTER_BASELINE, 18));
-					label.setText(n);
-					JOptionPane.showMessageDialog(null,label,"Izuzetak",JOptionPane.WARNING_MESSAGE);
-				  
-				
-			}
+		//showMessageDialog(null, n);
+			JLabel label = new JLabel("SansSerif");
+			label.setFont(new Font("Arial", Font.CENTER_BASELINE, 18));
+			label.setText(n);
+			JOptionPane.showMessageDialog(null,label,"Alert",JOptionPane.WARNING_MESSAGE);
+		  
+		
+	}
+	
+	public void showMessage(String message) {
+		JOptionPane.showConfirmDialog(null, message, "Info", JOptionPane.DEFAULT_OPTION);
+	}
 }

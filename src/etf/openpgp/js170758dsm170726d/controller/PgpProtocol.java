@@ -107,10 +107,11 @@ public class PgpProtocol extends PgpAbstract {
 			}
 
 			return secretKey.extractPrivateKey(
-					new JcePBESecretKeyDecryptorBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(pass));
+					new JcePBESecretKeyDecryptorBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME)
+														.build(pass));
 		} catch (PGPException e) {
 			
-			Alert("Nije uzet kljuca iz prstena");
+			//Alert("Couldn't find the private key");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -135,9 +136,9 @@ public class PgpProtocol extends PgpAbstract {
 			publicFileStream.close();
 			secretFileStream.close();
 		} catch (IOException | PGPException e) {
-			Alert("Nije procitan fajl koji je unet");
+			Alert("Key files have been corrupted");
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	public List<KeyData> getSecretKeys() {
@@ -200,7 +201,7 @@ public class PgpProtocol extends PgpAbstract {
 
 		} catch (PGPException e) {
 			// TODO Auto-generated catch block
-			Alert("Nije generisan par kljucev");
+			Alert("Couldn't generate key pair");
 			e.printStackTrace();
 			return null;
 		}
@@ -216,7 +217,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			publicOut.close();
 		} catch (IOException e) {
-			Alert("Nije sacuvan javni kljuc");
+			Alert("Couldn't save public key");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -230,7 +231,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			secretOut.close();
 		} catch (IOException e) {
-			Alert("Nije sacuvan privatni kljuc");
+			Alert("Couldn't save private key");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -268,7 +269,7 @@ public class PgpProtocol extends PgpAbstract {
 			publicKeyRingCollection.getPublicKeyRing(keyID).encode(publicOut);
 			publicOut.close();
 		} catch (PGPException | IOException e) {
-			Alert("Nije exportovan  kljuc");
+			Alert("Couldn't export public key");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
@@ -286,7 +287,7 @@ public class PgpProtocol extends PgpAbstract {
 			secretOut.close();
 		} catch (PGPException | IOException e) {
 			
-			Alert("Nije sacuvan javni kljuc");
+			Alert("Couldn't save private key");
 			
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -313,7 +314,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = publicKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException e) {
-			Alert("Nije uvezen javni kljuc");
+			Alert("Couldn't import public key");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -340,7 +341,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = secretKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException | PGPException e) {
-			Alert("Nije uvezen privatni kljuc");
+			Alert("Couldn't import private key");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -382,7 +383,7 @@ public class PgpProtocol extends PgpAbstract {
 			}
 			return null;
 		} catch (PGPException e) {
-			Alert("Nije uzeti potpisani kljuc");
+			Alert("Couldn't find signing key");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
@@ -407,7 +408,7 @@ public class PgpProtocol extends PgpAbstract {
 			keyPairGenerator.initialize(bitLength);
 			return keyPairGenerator.generateKeyPair();
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			Alert("Nije uzet par kljuceva");
+			Alert("Couldn't generate key pair");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
@@ -415,10 +416,10 @@ public class PgpProtocol extends PgpAbstract {
 
 	}
 	@SuppressWarnings("resource")
-	protected void verifyMessage(PGPCompressedData compressedData, String outputFile1) {
+	protected void verifyMessage(PGPCompressedData compressedData, String outputFile) {
 		try {
 			//Promena stringa bez .out dodatka
-			String outputFile = outputFile1.substring(0,outputFile1.length()-4);
+			outputFile = outputFile.substring(0,outputFile.length()-4);
 			//
 			JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(compressedData.getDataStream());
 
@@ -426,7 +427,6 @@ public class PgpProtocol extends PgpAbstract {
 			PGPOnePassSignature onePassSignature = onePassSignatureList.get(0);
 			PGPLiteralData literalData = (PGPLiteralData) objectFactory.nextObject();
 
-	
 			InputStream literalInputStream = literalData.getInputStream();
 			int ch;
 
@@ -445,14 +445,14 @@ public class PgpProtocol extends PgpAbstract {
 			PGPSignatureList signatureList = (PGPSignatureList) objectFactory.nextObject();
 
 			if (onePassSignature.verify(signatureList.get(0))) {
-				System.out.println("signature verified.");
+				showMessage("Signature verified. File signed by " + publicKey.getUserIDs().next());
 			} else {
-				System.out.println("signature verification failed.");
+				throw new Exception("Signature verification failed.");
 			}
-		} catch (IOException | PGPException e) {
-			Alert("Nije uspela verfikacija");
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert(e.getMessage());
+			//e.printStackTrace();
 		}
 
 	}
@@ -464,10 +464,8 @@ public class PgpProtocol extends PgpAbstract {
 
 			PGPSignature signature = signatureList.get(0);
 			PGPPublicKey publicKey = publicKeyRingCollection.getPublicKey(signature.getKeyID());
-			//FileOutputStream outputStream = new FileOutputStream(new File(inputFile + ".out"));
 			
 			signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), publicKey);
-			
 			
 			while ((ch = inputStream.read()) >= 0) {
 				signature.update((byte) ch);
@@ -476,14 +474,13 @@ public class PgpProtocol extends PgpAbstract {
 			//outputStream.close();
 
 			if (signature.verify()) {
-				System.out.println("signature verified.");
+				showMessage("Signature verified. File signed by " + publicKey.getUserIDs().next());
 			} else {
-				System.out.println("signature verification failed.");
+				throw new Exception("Signature verification failed.");
 			}
-		} catch (IOException | PGPException e) {
-			Alert("Nije  uspelo potpisivanje");
+		} catch (Exception e) {
+			Alert(e.getMessage());
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
     }
 	@SuppressWarnings("deprecation")
@@ -611,6 +608,7 @@ public class PgpProtocol extends PgpAbstract {
 			
 			boolean signed = false;
 			PGPPrivateKey privateKey = null;
+			PGPSecretKey secretKey = null;
 			PGPPublicKeyEncryptedData encryptedData = null;
 			PGPEncryptedDataList dataList = (PGPEncryptedDataList) (firstObject instanceof PGPEncryptedDataList
 					? firstObject
@@ -622,8 +620,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			while (dataObjectsIterator.hasNext()) {
 				encryptedData = (PGPPublicKeyEncryptedData) dataObjectsIterator.next();
-				System.out.println("next data object is " + encryptedData);
-				PGPSecretKey secretKey = secretKeyRingCollection.getSecretKey(encryptedData.getKeyID());
+				secretKey = secretKeyRingCollection.getSecretKey(encryptedData.getKeyID());
 
 				if (secretKey != null) {
 					char[] pass = showPasswordDialog(secretKey.getKeyID());
@@ -635,7 +632,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			if (privateKey == null) {
 				System.out.println();
-				throw new RuntimeException("secret key for message not found");
+				throw new RuntimeException("Secret key for message not found");
 			}
 
 			InputStream clearDataInputStream = null;
@@ -653,7 +650,7 @@ public class PgpProtocol extends PgpAbstract {
 
 			message = clearObjectFactory.nextObject();
 
-			System.out.println("message for PGPCompressedData check is " + message);
+			//System.out.println("Message for PGPCompressedData check is " + message);
 
 			if (message instanceof PGPCompressedData) {
 				PGPCompressedData compressedData = (PGPCompressedData) message;
@@ -661,20 +658,21 @@ public class PgpProtocol extends PgpAbstract {
 				message = objectFactory.nextObject();
 			}
 
-			System.out.println("message for PGPOnePassSignature check is " + message);
+			//System.out.println("Message for PGPOnePassSignature check is " + message);
 
 			PGPOnePassSignature calculatedSignature = null;
-
+			PGPPublicKey signPublicKey = null;
+			
 			if (message instanceof PGPOnePassSignatureList) {
 
 				calculatedSignature = ((PGPOnePassSignatureList) message).get(0);
-				PGPPublicKey signPublicKey = publicKeyRingCollection.getPublicKey(calculatedSignature.getKeyID());
+				signPublicKey = publicKeyRingCollection.getPublicKey(calculatedSignature.getKeyID());
 				calculatedSignature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), signPublicKey);
 				message = objectFactory.nextObject();
 				signed = true;
 			}
 
-			System.out.println("message for PGPLiteralData check is " + message);
+			//System.out.println("Message for PGPLiteralData check is " + message);
 
 			if (message instanceof PGPLiteralData) {
 				InputStream literalDataInputStream = ((PGPLiteralData) message).getInputStream();
@@ -690,34 +688,43 @@ public class PgpProtocol extends PgpAbstract {
 				}
 				outputStream.close();
 			} else {
-				throw new RuntimeException("unexpected message type " + message.getClass().getName());
+				throw new RuntimeException("Unexpected message type " + message.getClass().getName());
 			}
+			
+			String info = "";
 
 			if (calculatedSignature != null) {
 				PGPSignatureList signatureList = (PGPSignatureList) objectFactory.nextObject();
 
-				System.out.println("signature list (" + signatureList.size() + " sigs) is " + signatureList);
+				//System.out.println("Signature list (" + signatureList.size() + " sigs) is " + signatureList);
 				PGPSignature messageSignature = (PGPSignature) signatureList.get(0);
-				System.out.println("verification signature is " + messageSignature);
+				//System.out.println("Verification signature is " + messageSignature);
 				if (!calculatedSignature.verify(messageSignature)) {
-					throw new RuntimeException("signature verification failed");
+					throw new RuntimeException("Signature verification failed");
+				}
+				else if(signed){
+					info += "Signature verified. File signed by " + signPublicKey.getUserIDs().next() + "\n";
 				}
 			}
 
 			if (encryptedData.isIntegrityProtected()) {
 				if (encryptedData.verify()) {
-					System.out.println("message integrity protection verification succeeded");
+					info += "Message integrity checked. File encrypted for " +
+					secretKeyRingCollection.getSecretKeyRing(secretKey.getKeyID()).getSecretKeys().next().getUserIDs().next();
 				} else {
-					throw new RuntimeException("message failed integrity check");
+					throw new RuntimeException("Message failed integrity check");
 				}
 			} else {
-				System.out.println("message not integrity protected");
+				info += "Message not integrity protected\n";
 			}
-
+			showMessage(info);
 			// close streams
 			if (clearDataInputStream != null)
 				clearDataInputStream.close();
 		}
+		inputStream.close();
+		
+		
 	}
 
 	private char[] showPasswordDialog(Long keyID) {
