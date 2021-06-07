@@ -271,7 +271,7 @@ public class PgpProtocol extends PgpAbstract {
 		} catch (PGPException | IOException e) {
 			Alert("Couldn't export public key");
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
 
 		}
@@ -290,7 +290,7 @@ public class PgpProtocol extends PgpAbstract {
 			Alert("Couldn't save private key");
 			
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
 
 		}
@@ -314,7 +314,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = publicKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException e) {
-			Alert("Couldn't import public key");
+			//Alert("Couldn't import public key");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
@@ -341,7 +341,7 @@ public class PgpProtocol extends PgpAbstract {
 			String keyUser = secretKey.getUserIDs().next();
 			return new KeyData(keyUser, keyID, true);
 		} catch (IOException | PGPException e) {
-			Alert("Couldn't import private key");
+			//Alert("Couldn't import private key");
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			return null;
